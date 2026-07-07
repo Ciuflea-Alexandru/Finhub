@@ -14,6 +14,8 @@ class Stock extends Model
         'user_id',
         'symbol',
         'name',
+        'logo',
+        'exchange',
     ];
 
     public function user(): BelongsTo

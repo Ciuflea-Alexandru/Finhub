@@ -11,7 +11,6 @@ class FinnhubService
 
     public function __construct()
     {
-        // Always pull your API key from the .env file!
         $this->apiKey = config('services.finnhub.key');
     }
 
@@ -19,6 +18,28 @@ class FinnhubService
     {
         $response = Http::get("{$this->baseUrl}/quote", [
             'symbol' => $symbol,
+            'token' => $this->apiKey,
+        ]);
+
+        return $response->json();
+    }
+
+    public function getCompanyProfile(string $symbol)
+    {
+        $response = Http::get("{$this->baseUrl}/stock/profile2", [
+            'symbol' => $symbol,
+            'token' => $this->apiKey,
+        ]);
+
+        return $response->json();
+    }
+
+    public function getCompanyNews(string $symbol, string $from, string $to)
+    {
+        $response = Http::get("{$this->baseUrl}/company-news", [
+            'symbol' => $symbol,
+            'from' => $from,
+            'to' => $to,
             'token' => $this->apiKey,
         ]);
 
