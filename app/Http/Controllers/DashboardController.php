@@ -18,7 +18,14 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $user = Auth::user();
-        $stocks = $user->stocks;
+
+        // Get sorting parameters from the request, with defaults
+        $sort_by = $request->input('sort', 'id');
+        $direction = $request->input('direction', 'desc');
+
+        // Get the user's stocks and apply sorting at the database level
+        $stocks = $user->stocks()->orderBy($sort_by, $direction)->get();
+
         $stockData = [];
 
         foreach ($stocks as $stock) {

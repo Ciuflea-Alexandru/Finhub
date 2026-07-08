@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto lg:px-8">
+        <div class="max-w-8xl mx-auto lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <a href="{{ route('stocks.search') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -15,7 +15,10 @@
                     <br>
                     <br>
 
-                    <h3 class="font-semibold text-lg">Your Stocks</h3>
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-semibold text-lg">Your Stocks</h3>
+                    </div>
+
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
@@ -23,13 +26,13 @@
                                     Logo
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Symbol
+                                    <a href="{{ route('dashboard', ['sort' => 'symbol', 'direction' => request('sort') === 'symbol' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Symbol</a>
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Name
+                                    <a href="{{ route('dashboard', ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Name</a>
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Exchange
+                                    <a href="{{ route('dashboard', ['sort' => 'exchange', 'direction' => request('sort') === 'exchange' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Exchange</a>
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Current Price
@@ -38,7 +41,7 @@
                                     Change (24h)
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Last Updated
+                                    <a href="{{ route('dashboard', ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Date Added</a>
                                 </th>
                                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Actions
