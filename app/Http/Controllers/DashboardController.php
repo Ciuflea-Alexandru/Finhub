@@ -6,6 +6,7 @@ use App\Services\FinnhubService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 
 class DashboardController extends Controller
 {
@@ -23,8 +24,17 @@ class DashboardController extends Controller
         $sort_by = $request->input('sort', 'id');
         $direction = $request->input('direction', 'desc');
 
-        // Get the user's stocks and apply sorting at the database level
-        $stocks = $user->stocks()->orderBy($sort_by, $direction)->get();
+        // Define columns that can be sorted at the database level
+        $dbSortable = ['id', 'symbol', 'name', 'exchange'];
+
+        $stocks = $user->stocks;
+
+        // If sorting by a database column, apply it to the initial query
+        if (in_array($sort_by, $dbSortable)) {
+            $stocks = $user->stocks()->orderBy($sort_by, $direction)->get();
+        } else {
+            $stocks = $user->stocks()->get();
+        }
 
         $stockData = [];
 
@@ -56,6 +66,16 @@ class DashboardController extends Controller
                 'change_percent' => $cachedData['change_percent'],
                 'timestamp' => $cachedData['timestamp'],
             ];
+        }
+
+        // If sorting by a non-database column, sort the final collection
+        if (!in_array($sort_by, $dbSortable)) {
+            $stockCollection = new Collection($stockData);
+            if ($direction === 'desc') {
+                $stockData = $stockCollection->sortByDesc($sort_by)->values()->all();
+            } else {
+                $stockData = $stockCollection->sortBy($sort_by)->values()->all();
+            }
         }
 
         return view('dashboard', ['stocks' => $stockData]);

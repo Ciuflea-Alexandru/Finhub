@@ -45,4 +45,15 @@ class FinnhubService
 
         return $response->json();
     }
+
+    public function getEarningsCalendar(string $from, string $to)
+    {
+        $response = Http::get("{$this->baseUrl}/calendar/earnings", [
+            'from' => $from,
+            'to' => $to,
+            'token' => $this->apiKey,
+        ]);
+
+        return $response->json();
+    }
 }

@@ -9,12 +9,6 @@
         <div class="max-w-8xl mx-auto lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <a href="{{ route('stocks.search') }}" class="inline-block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Search Stocks
-                    </a>
-                    <br>
-                    <br>
-
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="font-semibold text-lg">Your Stocks</h3>
                     </div>
@@ -22,28 +16,70 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50 dark:bg-gray-700">
                             <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Logo
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     <a href="{{ route('dashboard', ['sort' => 'symbol', 'direction' => request('sort') === 'symbol' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Symbol</a>
+                                    <span>
+                                        @if(request('sort') === 'symbol')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     <a href="{{ route('dashboard', ['sort' => 'name', 'direction' => request('sort') === 'name' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Name</a>
+                                    <span>
+                                        @if(request('sort') === 'name')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     <a href="{{ route('dashboard', ['sort' => 'exchange', 'direction' => request('sort') === 'exchange' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Exchange</a>
+                                    <span>
+                                        @if(request('sort') === 'exchange')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Current Price
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <a href="{{ route('dashboard', ['sort' => 'price', 'direction' => request('sort') === 'price' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Current Price</a>
+                                    <span>
+                                        @if(request('sort') === 'price')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                    Change (24h)
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                    <a href="{{ route('dashboard', ['sort' => 'change_percent', 'direction' => request('sort') === 'change_percent' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Change (24h)</a>
+                                    <span>
+                                        @if(request('sort') === 'change_percent')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     <a href="{{ route('dashboard', ['sort' => 'id', 'direction' => request('sort') === 'id' && request('direction') === 'asc' ? 'desc' : 'asc']) }}">Date Added</a>
+                                    <span>
+                                        @if(request('sort') === 'id')
+                                            {{ request('direction') === 'asc' ? '<' : '>' }}
+                                        @else
+                                            -
+                                        @endif
+                                    </span>
                                 </th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                <th scope="col" class="px-3 py-3 text-left text-sm font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                     Actions
                                 </th>
                             </tr>
@@ -51,36 +87,36 @@
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200">
                             @foreach ($stocks as $stock)
                                 <tr id="stock-{{ $stock['symbol'] }}">
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 whitespace-nowrap">
                                         @if ($stock['logo'])
                                             <a href="{{ route('stocks.show', $stock['id']) }}">
                                                 <img src="{{ $stock['logo'] }}" alt="{{ $stock['name'] }} Logo" class="h-8 w-8">
                                             </a>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 whitespace-nowrap">
                                         <a href="{{ route('stocks.show', $stock['id']) }}" class="text-blue-500 hover:underline">
                                             {{ $stock['symbol'] }}
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 whitespace-nowrap">
                                         {{ $stock['name'] ?? 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 whitespace-nowrap">
                                         {{ $stock['exchange'] ?? 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap" id="price-{{ $stock['symbol'] }}">
+                                    <td class="px-3 py-4 whitespace-nowrap" id="price-{{ $stock['symbol'] }}">
                                         {{ $stock['price'] }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap font-bold" id="change-{{ $stock['symbol'] }}">
+                                    <td class="px-3 py-4 whitespace-nowrap font-bold" id="change-{{ $stock['symbol'] }}">
                                         <span class="{{ $stock['change_percent'] >= 0 ? 'text-green-500' : 'text-red-500' }}">
                                             {{ $stock['change_percent'] }}%
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-500" id="timestamp-{{ $stock['symbol'] }}">
+                                    <td class="px-3 py-4 whitespace-nowrap text-xs text-gray-500" id="timestamp-{{ $stock['symbol'] }}">
                                         {{ date('Y-m-d H:i:s', (int)$stock['timestamp']) }} UTC
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-3 py-4 whitespace-nowrap">
                                         <form action="{{ route('stocks.destroy', $stock['id']) }}" method="POST">
                                             @csrf
                                             @method('DELETE')

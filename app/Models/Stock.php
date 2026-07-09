@@ -16,6 +16,7 @@ class Stock extends Model
         'name',
         'logo',
         'exchange',
+        'finnhubIndustry',
     ];
 
     public function user(): BelongsTo

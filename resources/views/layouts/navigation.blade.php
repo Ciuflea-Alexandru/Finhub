@@ -15,6 +15,15 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('stocks.search')" :active="request()->routeIs('stocks.search')">
+                        {{ __('Search Stocks') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('earnings.index')" :active="request()->routeIs('earnings.index')">
+                        {{ __('Upcoming Earnings') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('market-pulse.index')" :active="request()->routeIs('market-pulse.index')">
+                        {{ __('Market Pulse') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +78,15 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('stocks.search')" :active="request()->routeIs('stocks.search')">
+                {{ __('Search Stocks') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('earnings.index')" :active="request()->routeIs('earnings.index')">
+                {{ __('Upcoming Earnings') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('market-pulse.index')" :active="request()->routeIs('market-pulse.index')">
+                {{ __('Market Pulse') }}
             </x-responsive-nav-link>
         </div>
 

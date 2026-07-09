@@ -3,6 +3,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\EarningsController; // Import the new controller
+use App\Http\Controllers\MarketPulseController; // Import the new controller
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,6 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/stocks', [StockController::class, 'store'])->name('stocks.store');
     Route::delete('/stocks/{stock}', [StockController::class, 'destroy'])->name('stocks.destroy');
     Route::get('/stocks/{stock}', [StockController::class, 'show'])->name('stocks.show');
+    Route::get('/stocks/details/{symbol}', [StockController::class, 'details'])->name('stocks.details'); // New route
+    Route::get('/earnings', [EarningsController::class, 'index'])->name('earnings.index');
+    Route::get('/market-pulse', [MarketPulseController::class, 'index'])->name('market-pulse.index');
     // API routes
     Route::get('/api/stocks', [DashboardController::class, 'stocksApi'])->name('api.stocks');
 });

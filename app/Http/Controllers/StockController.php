@@ -7,6 +7,7 @@ use App\Services\FinnhubService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB; // Added this line
 
 class StockController extends Controller
 {
@@ -72,6 +73,15 @@ class StockController extends Controller
             'name' => $profile['name'] ?? null,
             'logo' => $profile['logo'] ?? null,
             'exchange' => $profile['exchange'] ?? null,
+            'finnhubIndustry' => $profile['finnhubIndustry'] ?? null,
+        ]);
+
+        // Record the add event in the new table
+        DB::table('stock_add_events')->insert([
+            'user_id' => $user->id,
+            'stock_symbol' => $validated['symbol'],
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Stock added successfully!');
@@ -83,7 +93,7 @@ class StockController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $symbol = $stock->symbol;
+        $symbol = $stock->symbol; // Ensure $symbol is defined
         $quote = $this->finnhubService->getQuote($symbol);
         $profile = $this->finnhubService->getCompanyProfile($symbol);
         $timestamp = microtime(true);
@@ -107,6 +117,49 @@ class StockController extends Controller
 
         return view('stocks.show', [
             'stock' => $stock,
+            'symbol' => $symbol, // Pass $symbol to the view
+            'quote' => $quote,
+            'profile' => $profile,
+            'timestamp' => $timestamp,
+            'change_percent' => round($changePercent, 2),
+            'news' => $news,
+        ]);
+    }
+
+    public function details($symbol)
+    {
+        $symbol = Str::upper($symbol);
+
+        // Check if the user owns this stock to pass the model instance if they do
+        $stock = Auth::user()->stocks()->where('symbol', $symbol)->first();
+
+        $quote = $this->finnhubService->getQuote($symbol);
+        $profile = $this->finnhubService->getCompanyProfile($symbol);
+        $timestamp = microtime(true);
+        $changePercent = 0;
+
+        if (empty($profile)) {
+            abort(404, 'Stock symbol not found.');
+        }
+
+        if (!empty($quote['c']) && !empty($quote['pc'])) {
+            $changePercent = (($quote['c'] - $quote['pc']) / $quote['pc']) * 100;
+        }
+
+        // Fetch company news for the last 30 days
+        $from = now()->subDays(30)->toDateString();
+        $to = now()->toDateString();
+        $allNews = $this->finnhubService->getCompanyNews($symbol, $from, $to);
+
+        // Sort news by datetime and take the top 3
+        usort($allNews, function ($a, $b) {
+            return $b['datetime'] <=> $a['datetime'];
+        });
+        $news = array_slice($allNews, 0, 3);
+
+        return view('stocks.show', [
+            'stock' => $stock, // This will be null if the user doesn't own the stock
+            'symbol' => $symbol,
             'quote' => $quote,
             'profile' => $profile,
             'timestamp' => $timestamp,

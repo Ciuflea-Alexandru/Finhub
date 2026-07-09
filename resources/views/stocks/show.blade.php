@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ $stock->name ?? $stock->symbol }} Details
+            {{ $profile['name'] ?? $symbol }} Details
         </h2>
     </x-slot>
 
@@ -9,24 +9,19 @@
         <div class="max-w-7xl mx-auto lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
+                    <div class="flex items-center mb-4">
+                        @if (!empty($profile['logo']))
+                            <img src="{{ $profile['logo'] }}" alt="{{ $profile['name'] }} Logo" class="h-20 w-20 mr-4">
+                        @endif
+                        <div>
+                            <h3 class="text-2xl font-bold">{{ $profile['name'] ?? $symbol }} ({{ $symbol }})</h3>
+                            <p class="text-gray-600">{{ $profile['exchange'] ?? 'N/A' }}</p>
+                        </div>
+                    </div>
 
-
-                    {{-- Main content section: Flex container for left and right columns --}}
                     <div class="flex space-x-6 mt-6">
-
                         {{-- Left Column: Live Quote and Company Information --}}
                         <div class="flex-1">
-
-                            <div class="flex items-center mb-4">
-                                @if (!empty($profile['logo']))
-                                <img src="{{ $profile['logo'] }}" alt="{{ $profile['name'] }} Logo" class="h-20 w-20 mr-4">
-                                @endif
-                                <div>
-                                    <h3 class="text-2xl font-bold">{{ $profile['name'] ?? $stock->symbol }} ({{ $stock->symbol }})</h3>
-                                    <p class="text-gray-600">{{ $profile['exchange'] ?? 'N/A' }}</p>
-                                    </div>
-                                </div>
-
                             <h4 class="text-xl font-semibold mb-2">Live Quote</h4>
                             <p><strong>Current Price:</strong> {{ $quote['c'] ?? 'N/A' }}</p>
                             <p>
@@ -49,16 +44,6 @@
                             <p><strong>Market Cap:</strong> {{ number_format($profile['marketCapitalization'] ?? 0) }}</p>
                             <p><strong>IPO Date:</strong> {{ $profile['ipo'] ?? 'N/A' }}</p>
                             <p><strong>Shares Outstanding:</strong> {{ number_format($profile['shareOutstanding'] ?? 0) }}</p>
-
-                            <div class="mt-8">
-                                <form action="{{ route('stocks.destroy', $stock->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove {{ $stock->symbol }} from your portfolio?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                        Remove from Portfolio
-                                    </button>
-                                </form>
-                            </div>
                         </div>
 
                         {{-- Right Column: Recent News --}}
@@ -75,9 +60,31 @@
                                     @endforeach
                                 </div>
                             @else
-                                <p>No recent news available for {{ $stock->symbol }}.</p>
+                                <p>No recent news available for {{ $symbol }}.</p>
                             @endif
                         </div>
+                    </div>
+
+                    <div class="mt-8">
+                        @if ($stock)
+                            {{-- User owns this stock --}}
+                            <form action="{{ route('stocks.destroy', $stock->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove {{ $symbol }} from your portfolio?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    Remove from Portfolio
+                                </button>
+                            </form>
+                        @else
+                            {{-- User does not own this stock --}}
+                            <form method="POST" action="{{ route('stocks.store') }}">
+                                @csrf
+                                <input type="hidden" name="symbol" value="{{ $symbol }}">
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    Add to Portfolio
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
