@@ -25,20 +25,28 @@ A high-performance financial data dashboard built with **Laravel**, **PostgreSQL
     *   Displays live quote, company profile, and 24-hour change on search results.
 *   **Dedicated Stock Detail Page:**
     *   Provides an in-depth view of a single stock, combining live quotes, full company profile details, and recent news articles in a clear, two-column layout.
+*   **Market Pulse Dashboard:**
+    *   Displays aggregated market insights: "Most Held Stocks" (based on user holdings), "Trending Adds" (based on recent user additions), and "Upcoming Earnings" for the next day.
+    *   Data is pre-calculated and cached by a background scheduled console command for high performance and reduced API calls.
+*   **Upcoming Earnings Page:**
+    *   Dedicated page showing detailed earnings reports for *your saved stocks* for the next 20 days.
+    *   Includes a chart visualizing earnings activity over the period.
+    *   Detailed reports show symbol, date, time, EPS estimate, and revenue estimate.
 *   **Performance & Scalability:**
-    *   **Redis Caching:** Aggressively caches Finnhub API responses to minimize external API calls, reduce latency, and prevent rate-limiting issues.
+    *   **Redis Caching:** Aggressively caches Finnhub API responses to minimize external API calls, reduce latency, and prevent rate-limiting issues. This includes pre-calculating and caching market pulse insights via a scheduled console command.
 
 ## 🚀 Architecture & Technologies
 
 This project is built for speed and scalability using a modern containerized stack:
 
 *   **Laravel (Sail):** The core PHP framework managing business logic, routing, and API orchestration.
-*   **PostgreSQL:** Persistent storage for user data, stock portfolios, and other application data.
+*   **PostgreSQL:** Persistent storage for user data, stock portfolios, and other application data. Includes `stock_add_events` table for tracking trending stock additions.
 *   **Redis:** High-speed caching layer to store Finnhub API responses, ensuring sub-millisecond data delivery to the application.
 *   **Docker & Laravel Sail:** Full environment containerization to guarantee consistency between development, testing, and production environments.
 *   **Finnhub API:** External service providing real-time and historical financial market data.
 *   **Tailwind CSS:** A utility-first CSS framework for rapid and consistent UI development.
 *   **JavaScript (Fetch API, DOM Manipulation):** For client-side polling and dynamic updates on the dashboard.
+*   **Laravel Console Commands:** Scheduled commands (`pulse:update-cache`) are used to pre-process and cache complex market data, ensuring responsive UI and efficient API usage.
 
 ## 🛠️ Setup & Installation
 
@@ -104,8 +112,13 @@ Follow these steps to get the FinHub Dashboard up and running on your local mach
     ./vendor/bin/sail npm install
     ./vendor/bin/sail npm run dev
     ```
+9.  **Start the server and scheduler:**
+    ```bash
+    ./vendor/bin/sail up
+    ./vendor/bin/sail artisan pulse:update-cache
+    ```
 
-9.  **Access the Application:**
+10. **Access the Application:**
     Open your web browser and navigate to `http://localhost` (or the `APP_PORT` you configured in `.env`).
 
 ## 🚀 Usage

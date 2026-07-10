@@ -31,7 +31,7 @@ class EarningsController extends Controller
         })->toArray();
 
         $from = now()->toDateString();
-        $to = now()->addDays(20)->toDateString();
+        $to = now()->addDays(14)->toDateString();
 
         $earningsCalendar = Cache::remember("earnings_calendar_{$from}_{$to}", now()->addDays(), function () use ($from, $to) {
             $response = $this->finnhubService->getEarningsCalendar($from, $to);
@@ -53,7 +53,7 @@ class EarningsController extends Controller
         $chartData = [];
         $currentDate = now()->copy();
 
-        for ($i = 0; $i <= 20; $i++) {
+        for ($i = 0; $i <= 14; $i++) {
             $dateString = $currentDate->toDateString();
             $chartLabels[] = $currentDate->format('M d');
             $chartData[$dateString] = 0;

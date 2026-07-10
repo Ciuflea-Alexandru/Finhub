@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
-                    <h3 class="font-bold text-xl mb-4">Earnings Activity for Next 20 Days</h3>
+                    <h3 class="font-bold text-xl mb-4">Earnings Activity for Next 14 Days</h3>
                     <div class="mb-8">
                         <canvas id="earningsChart" width="400" height="150"></canvas>
                     </div>

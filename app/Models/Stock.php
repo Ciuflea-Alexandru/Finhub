@@ -16,7 +16,7 @@ class Stock extends Model
         'name',
         'logo',
         'exchange',
-        'finnhubIndustry',
+        'finnhubIndustry', // Meant for the most popular industry section, currently not in use
     ];
 
     public function user(): BelongsTo

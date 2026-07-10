@@ -52,7 +52,7 @@ class UpdateMarketPulseCache extends Command
                 ->select('symbol', DB::raw('COUNT(user_id) as holding_count'))
                 ->groupBy('symbol')
                 ->orderByDesc('holding_count')
-                ->limit(5)
+                ->limit(12)
                 ->get();
             $mostHeld = $mostHeldStocks->map(function ($stock) {
                 $profile = $this->finnhubService->getCompanyProfile($stock->symbol);
@@ -63,12 +63,12 @@ class UpdateMarketPulseCache extends Command
             $this->info('Cached Most Held Stocks.');
 
             // 2. Trending Adds (now based on stock_add_events table)
-            $trendingAddsStocks = DB::table('stock_add_events') // Query the new table
+            $trendingAddsStocks = DB::table('stock_add_events')
                 ->where('created_at', '>=', now()->subDays(7))
                 ->select('stock_symbol as symbol', DB::raw('COUNT(user_id) as new_add_count'))
                 ->groupBy('stock_symbol')
                 ->orderByDesc('new_add_count')
-                ->limit(5)
+                ->limit(12)
                 ->get();
             $trendingAdds = $trendingAddsStocks->map(function ($stock) {
                 $profile = $this->finnhubService->getCompanyProfile($stock->symbol);
@@ -78,9 +78,11 @@ class UpdateMarketPulseCache extends Command
             Cache::put('market_pulse_trending_adds', $trendingAdds, now()->addHours(1));
             $this->info('Cached Trending Adds.');
 
-            // 4. Stocks Close to Earnings Reports
-            $tomorrow = now()->addDay()->toDateString();
-            $response = $this->finnhubService->getEarningsCalendar($tomorrow, $tomorrow);
+            // 3. Stocks Close to Earnings Reports
+            $from = now()->toDateString();
+            $to = now()->addDays()->toDateString();
+
+            $response = $this->finnhubService->getEarningsCalendar($from, $to);
             $earningsCalendar = $response['earningsCalendar'] ?? [];
             $calendarSymbols = collect($earningsCalendar)->pluck('symbol')->unique()->toArray();
             $stockDetails = collect(DB::table('stocks')
@@ -97,13 +99,13 @@ class UpdateMarketPulseCache extends Command
                     $earning['stock_logo'] = $profile['logo'] ?? '';
                 }
                 return $earning;
-            })->sortBy('date')->values()->all();
+            })->sortBy('date')->values()->take(12)->all();
             Cache::put('market_pulse_upcoming_earnings', $upcomingEarnings, now()->addHours(6));
             $this->info('Cached Upcoming Earnings.');
 
             Log::info('Market Pulse cache updated successfully within loop.');
-            $this->info('Cache updated. Sleeping for 10 seconds...'); // Changed sleep to 10 seconds
-            sleep(10);
+            $this->info('Cache updated. Sleeping for one hour...');
+            sleep(3600);
         }
 
         $this->info('Market Pulse cache update loop finished.');
